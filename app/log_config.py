@@ -36,5 +36,5 @@ def configure_logging():
 
     # for TCP use TCPLogstashHandler and port 5000
     logstash_handler = logstash.LogstashHandler(
-        'localhost', 5959, version=1)
+        'logstash', 5959, version=1)
     app_logger.addHandler(logstash_handler)

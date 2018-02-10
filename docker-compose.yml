@@ -1,0 +1,60 @@
+version: '2'
+
+services:
+
+  elasticsearch:
+    build:
+      context: docker/elasticsearch/
+    volumes:
+      - ./docker/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+    networks:
+      - elk
+
+  logstash:
+    build:
+      context: docker/logstash/
+    volumes:
+      - ./docker/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./docker/logstash/pipeline:/usr/share/logstash/pipeline:ro
+    ports:
+      - "5000:5000"
+      - "5959:5959/udp"
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+  kibana:
+    build:
+      context: docker/kibana/
+    volumes:
+      - ./docker/kibana/config/:/usr/share/kibana/config:ro
+    ports:
+      - "5601:5601"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+  app:
+    build:
+      context: app/
+    ports:
+      - "8888:8888"
+    networks:
+      - elk
+    depends_on:
+      - logstash
+    command: python -m twisted --log-format text web -p tcp:port=8888 --wsgi app.app
+
+networks:
+
+  elk:
+    driver: bridge
