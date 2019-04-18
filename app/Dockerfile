@@ -1,4 +1,4 @@
-FROM python:3.6.3-slim
+FROM python:3.6.8-jessie
 RUN apt-get update && apt-get install -y build-essential python-dev
 RUN mkdir /opt/app
 WORKDIR /opt/app
