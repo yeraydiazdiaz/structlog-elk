@@ -5,6 +5,8 @@ services:
   elasticsearch:
     build:
       context: docker/elasticsearch/
+      args:
+        ELK_VERSION: $ELK_VERSION
     volumes:
       - ./docker/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
     ports:
@@ -18,12 +20,14 @@ services:
   logstash:
     build:
       context: docker/logstash/
+      args:
+        ELK_VERSION: $ELK_VERSION
     volumes:
       - ./docker/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
       - ./docker/logstash/pipeline:/usr/share/logstash/pipeline:ro
     ports:
       - "5000:5000"
-      - "5959:5959/udp"
+      - "9600:9600"
     environment:
       LS_JAVA_OPTS: "-Xmx256m -Xms256m"
     networks:
@@ -34,6 +38,8 @@ services:
   kibana:
     build:
       context: docker/kibana/
+      args:
+        ELK_VERSION: $ELK_VERSION
     volumes:
       - ./docker/kibana/config/:/usr/share/kibana/config:ro
     ports:
