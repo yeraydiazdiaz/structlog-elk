@@ -1,5 +1,4 @@
-FROM python:3.6.8-jessie
-RUN apt-get update && apt-get install -y build-essential python-dev
+FROM python:3.7.3-stretch
 RUN mkdir /opt/app
 WORKDIR /opt/app
 RUN pip install -U pip setuptools wheel
